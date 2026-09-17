@@ -1,0 +1,11 @@
+name: gemm-regression
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+jobs:
+  validate-gemm-kernels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Requires a self-hosted CUDA GPU runner"

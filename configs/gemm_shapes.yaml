@@ -1,0 +1,28 @@
+nominal:
+  - {M: 4096, N: 4096, K: 4096, dtype: fp16, layout: [row, col], name: "square_4k_fp16"}
+  - {M: 4096, N: 4096, K: 4096, dtype: bf16, layout: [row, col], name: "square_4k_bf16"}
+  - {M: 8192, N: 8192, K: 8192, dtype: fp16, layout: [row, col], name: "square_8k_fp16"}
+  - {M: 2048, N: 4096, K: 8192, dtype: tf32, layout: [row, col], name: "rect_llm_ffn_tf32"}
+
+llm_shapes:
+  - {M: 4096, N: 14336, K: 4096, dtype: bf16, layout: [row, col], name: "llama_ffn_up_proj"}
+  - {M: 4096, N: 4096, K: 14336, dtype: bf16, layout: [row, col], name: "llama_ffn_down_proj"}
+  - {M: 1, N: 4096, K: 4096, dtype: fp16, layout: [row, col], name: "decode_batch1_gemv_edge"}
+
+boundary:
+  - {M: 1023, N: 1023, K: 1023, dtype: fp16, layout: [row, col], name: "odd_dims_near_1k"}
+  - {M: 127,  N: 255,  K: 511,  dtype: fp16, layout: [row, col], name: "small_odd_dims"}
+  - {M: 4097, N: 4096, K: 4096, dtype: fp16, layout: [row, col], name: "one_past_tile_boundary"}
+  - {M: 4095, N: 4096, K: 4096, dtype: fp16, layout: [row, col], name: "one_before_tile_boundary"}
+
+adversarial:
+  - {M: 512, N: 512, K: 513, dtype: fp16, layout: [row, col], name: "unaligned_k_plus1"}
+  - {M: 3,   N: 3,   K: 3,   dtype: fp16, layout: [row, col], name: "degenerate_tiny"}
+  - {M: 4096, N: 4096, K: 4096, dtype: fp8, layout: [row, col], name: "fp8_precision_stress"}
+
+tolerances:
+  fp16: {rtol: 1.0e-2, atol: 1.0e-2}
+  bf16: {rtol: 2.0e-2, atol: 2.0e-2}
+  tf32: {rtol: 5.0e-3, atol: 5.0e-3}
+  fp8:  {rtol: 5.0e-2, atol: 5.0e-2}
+  fp32: {rtol: 1.0e-5, atol: 1.0e-6}

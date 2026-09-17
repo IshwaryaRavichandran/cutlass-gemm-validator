@@ -1,0 +1,15 @@
+[project]
+name = "gemm-validator"
+version = "0.1.0"
+description = "Correctness and performance validation harness for NVIDIA CUTLASS GEMM kernels"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.2.0",
+    "numpy>=1.26.0",
+    "pandas>=2.1.0",
+    "pyyaml>=6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
