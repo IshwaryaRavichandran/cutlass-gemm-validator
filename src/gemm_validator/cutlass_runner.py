@@ -52,13 +52,25 @@ class CutlassRunner:
             csv_files = sorted(Path(tmpdir).glob("profile_run*.csv"))
             if not csv_files:
                 raise RuntimeError(
-                    f"No CSV output file found (looked in {tmpdir}). "
-                    f"stdout tail:\n{proc.stdout[-2000:]}\nstderr tail:\n{proc.stderr[-2000:]}"
+                    f"No CSV output file found (looked in {tmpdir}).\nstdout:\n{proc.stdout[-1000:]}"
                 )
             with open(csv_files[0], newline="") as f:
                 rows = list(csv.DictReader(f))
+
             if not rows:
-                raise RuntimeError(f"CSV file {csv_files[0]} was empty.\nstdout:\n{proc.stdout[-2000:]}")
+                # Not an error: this CUTLASS build's kernel catalog has no
+                # kernel whose alignment/tile constraints this problem shape
+                # satisfies (e.g., an align8 kernel set requires M % 8 == 0
+                # for vectorized output writes). Report it explicitly rather
+                # than crashing, so callers can distinguish "no kernel
+                # available for this shape" from "kernel ran and failed."
+                return ProfilerResult(
+                    name=f"gemm_{M}x{N}x{K}_{dtype}",
+                    runtime_ms=-1.0,
+                    gflops=-1.0,
+                    status="no_kernel_available",
+                    raw_row={},
+                )
 
             row = rows[0]
             return ProfilerResult(
